@@ -7,14 +7,14 @@
 
 import Foundation
 import Combine
-class CobaltManager: NSObject, ObservableObject {
+public class CobaltManager: NSObject, ObservableObject {
     //params according to Cobalt API parameters & default values if applicable
     //DOCS:
     //-_ callback: returns file path URL of downloaded video. also returns Error if there was an error
     //-statusUpdate: periodically called to provide human-readable updates on download progress
     //-the class also has a published var called dlPercentage which contains a 0-1 percentage for the download. use is optional.
     @Published var dlPercentage: Double = 0
-    static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
+    public static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
         var response: CobaltResponse?
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
@@ -69,18 +69,18 @@ class CobaltManager: NSObject, ObservableObject {
     }
 }
 extension CobaltManager: URLSessionDownloadDelegate {
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         self.dlPercentage = (Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)) / Double(100)
     }
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         self.dlPercentage = 1
     }
 }
-enum CobaltError: Error {
+public enum CobaltError: Error {
     case itsFucked
 }
 
-struct CobaltRequest: Codable {
+public struct CobaltRequest: Codable {
     var url: String
     var vCodec: String = VideoCodec.h264.rawValue
     var vQuality: Int = 720
@@ -91,7 +91,7 @@ struct CobaltRequest: Codable {
     var isAudioMuted: Bool = false
     var dubLang: Bool = false
 }
-struct CobaltResponse: Codable {
+public struct CobaltResponse: Codable {
     var status: CobaltResStatus
     var text: String? /* ??? waht is this <---- absolute DUMBASS its human readable status stuff */
     var url: String?
@@ -100,18 +100,18 @@ struct CobaltResponse: Codable {
     var audio: String?
 }
 
-struct Picker: Codable {
+public struct Picker: Codable {
     var type: String
     var url: String
     var thumb: String
 }
 
-enum PickerType: String, Codable {
+public enum PickerType: String, Codable {
     case various = "various"
     case images = "images"
 }
 
-enum CobaltResStatus: String, Codable {
+public enum CobaltResStatus: String, Codable {
     case error = "error"
     case redirect = "redirect"
     case stream = "stream"
@@ -119,12 +119,12 @@ enum CobaltResStatus: String, Codable {
     case picker = "picker"
 }
 
-enum VideoCodec: String {
+public enum VideoCodec: String {
     case h264 = "h264"
     case av1 = "av1"
     case vp9 = "vp9"
 }
-enum AudioType: String {
+public enum AudioType: String {
     case best = "best"
     case mp3 = "mp3"
     case ogg = "ogg"
