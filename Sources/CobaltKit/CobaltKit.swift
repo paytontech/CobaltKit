@@ -14,7 +14,7 @@ public class CobaltManager: NSObject, ObservableObject {
     //-statusUpdate: periodically called to provide human-readable updates on download progress
     //-the class also has a published var called dlPercentage which contains a 0-1 percentage for the download. use is optional.
     @Published var dlPercentage: Double = 0
-    public static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
+    static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
         var response: CobaltResponse?
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
@@ -76,11 +76,11 @@ extension CobaltManager: URLSessionDownloadDelegate {
         self.dlPercentage = 1
     }
 }
-public enum CobaltError: Error {
+enum CobaltError: Error {
     case itsFucked
 }
 
-public struct CobaltRequest: Codable {
+struct CobaltRequest: Codable {
     var url: String
     var vCodec: String = VideoCodec.h264.rawValue
     var vQuality: Int = 720
@@ -91,7 +91,7 @@ public struct CobaltRequest: Codable {
     var isAudioMuted: Bool = false
     var dubLang: Bool = false
 }
-public struct CobaltResponse: Codable {
+struct CobaltResponse: Codable {
     var status: CobaltResStatus
     var text: String? /* ??? waht is this <---- absolute DUMBASS its human readable status stuff */
     var url: String?
@@ -100,18 +100,18 @@ public struct CobaltResponse: Codable {
     var audio: String?
 }
 
-public struct Picker: Codable {
+struct Picker: Codable {
     var type: String
     var url: String
     var thumb: String
 }
 
-public enum PickerType: String, Codable {
+enum PickerType: String, Codable {
     case various = "various"
     case images = "images"
 }
 
-public enum CobaltResStatus: String, Codable {
+enum CobaltResStatus: String, Codable {
     case error = "error"
     case redirect = "redirect"
     case stream = "stream"
@@ -119,12 +119,12 @@ public enum CobaltResStatus: String, Codable {
     case picker = "picker"
 }
 
-public enum VideoCodec: String {
+enum VideoCodec: String {
     case h264 = "h264"
     case av1 = "av1"
     case vp9 = "vp9"
 }
-public enum AudioType: String {
+enum AudioType: String {
     case best = "best"
     case mp3 = "mp3"
     case ogg = "ogg"
