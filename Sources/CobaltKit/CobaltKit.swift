@@ -14,7 +14,7 @@ public class CobaltManager: NSObject, ObservableObject {
     //-statusUpdate: periodically called to provide human-readable updates on download progress
     //-the class also has a published var called dlPercentage which contains a 0-1 percentage for the download. use is optional.
     @Published var dlPercentage: Double = 0
-    static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
+    public static func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
         var response: CobaltResponse?
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
