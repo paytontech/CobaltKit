@@ -39,7 +39,7 @@ public class CobaltManager: NSObject, ObservableObject {
                         if let statusUpdate = statusUpdate {
                             statusUpdate("Now downloading...")
                         }
-                        urlSession.downloadTask(with: URL(string: (response?.url!)!)!) { media, res, err in
+                        var session = urlSession.downloadTask(with: URL(string: (response?.url!)!)!) { media, res, err in
                             if let err = err {
                                 callback(nil, err)
                                 return
@@ -47,10 +47,24 @@ public class CobaltManager: NSObject, ObservableObject {
                                 if let statusUpdate = statusUpdate {
                                     statusUpdate("Download complete!")
                                 }
-                                
-                                callback(media!, nil)
+                            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                                    let destinationURL = documentsDirectory.appendingPathComponent("downloadedVideo.mp4")
+                                    
+                                    do {
+                                        try FileManager.default.moveItem(at: media!, to: destinationURL)
+                                    } catch {
+                                        callback(nil, error)
+                                        return
+                                    }
+                                callback(destinationURL, nil)
                             
-                        }.resume()
+                        }
+                        if #available(macOS 12.0, *) {
+                            session.delegate = self
+                        } else {
+                            // Fallback on earlier versions
+                        }
+                        session.resume()
                         
                         
                     } else {
@@ -69,8 +83,11 @@ public class CobaltManager: NSObject, ObservableObject {
 extension CobaltManager: URLSessionDownloadDelegate {
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         self.dlPercentage = (Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)) / Double(100)
+        print(self.dlPercentage)
+        return
     }
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         self.dlPercentage = 1
+        return
     }
 }
