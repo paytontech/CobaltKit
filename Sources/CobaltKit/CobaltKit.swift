@@ -50,6 +50,11 @@ public class CobaltManager: NSObject, ObservableObject {
                                     let destinationURL = documentsDirectory.appendingPathComponent("downloadedVideo.mp4")
                                     
                                     do {
+                                        do {
+                                            try FileManager.default.removeItem(at: destinationURL)
+                                        } catch {
+                                            callback(nil, error)
+                                        }
                                         try FileManager.default.moveItem(at: media!, to: destinationURL)
                                     } catch {
                                         callback(nil, error)
