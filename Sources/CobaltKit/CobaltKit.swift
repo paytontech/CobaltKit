@@ -64,6 +64,7 @@ public class CobaltManager: NSObject, ObservableObject {
                             
                         } {
                             didSet {
+                                print(session.progress.fractionCompleted)
                                 if let percentageUpdate = percentageUpdate {
                                     percentageUpdate(session.progress.fractionCompleted / 1.0)
                                 }
