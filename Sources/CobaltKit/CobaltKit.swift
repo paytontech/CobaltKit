@@ -67,9 +67,10 @@ public class CobaltManager: NSObject, ObservableObject {
                         // Add an observer for the progress property of the download task
                         var progressObserver: NSKeyValueObservation?
 
-                        progressObserver = session.observe(\.progress.fractionCompleted, options: [.new], changeHandler: { (_, change) in
+                        progressObserver = session.observe(\.progress, options: [.new], changeHandler: { (_, change) in
+                            print("update")
                             if let percentageUpdate = percentageUpdate {
-                                percentageUpdate(change.newValue ?? 0.0)
+                                percentageUpdate(change.newValue!.fractionCompleted ?? 0.0)
                             }
                         })
 
