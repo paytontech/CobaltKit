@@ -13,8 +13,7 @@ public class CobaltManager: NSObject, ObservableObject {
     //-_ callback: returns file path URL of downloaded video. also returns Error if there was an error
     //-statusUpdate: periodically called to provide human-readable updates on download progress
     //-the class also has a published var called dlPercentage which contains a 0-1 percentage for the download. use is optional.
-    @Published var dlPercentage: Double = 0
-    public func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?) async {
+    public func startDownload(req: CobaltRequest, endpoint: String = "https://co.wuk.sh", _ callback: @escaping (URL?, Error?) -> Void, statusUpdate: ((String) -> Void)?, percentageUpdate: ((Double) -> Void)?) async {
         var response: CobaltResponse?
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
@@ -58,12 +57,14 @@ public class CobaltManager: NSObject, ObservableObject {
                                     }
                                 callback(destinationURL, nil)
                             
+                        } {
+                            didSet {
+                                if let percentageUpdate = percentageUpdate {
+                                    percentageUpdate(session.progress.fractionCompleted / 1.0)
+                                }
+                            }
                         }
-                        if #available(macOS 12.0, *) {
-                            session.delegate = self
-                        } else {
-                            // Fallback on earlier versions
-                        }
+                        
                         session.resume()
                         
                         
@@ -78,16 +79,5 @@ public class CobaltManager: NSObject, ObservableObject {
             }
         }.resume()
         
-    }
-}
-extension CobaltManager: URLSessionDownloadDelegate {
-    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        self.dlPercentage = (Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)) / Double(100)
-        print(self.dlPercentage)
-        return
-    }
-    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        self.dlPercentage = 1
-        return
     }
 }
