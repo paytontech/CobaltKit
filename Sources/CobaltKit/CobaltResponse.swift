@@ -7,7 +7,7 @@
 
 import Foundation
 public class CobaltResponse: Codable {
-    init(status: CobaltResStatus, text: String? = nil, url: String? = nil, pickerType: PickerType? = nil, picker: Picker? = nil, audio: String? = nil) {
+    public (status: CobaltResStatus, text: String? = nil, url: String? = nil, pickerType: PickerType? = nil, picker: Picker? = nil, audio: String? = nil) {
         self.status = status
         self.text = text
         self.url = url

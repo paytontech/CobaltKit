@@ -7,11 +7,11 @@
 
 import Foundation
 public class CobaltRequest: Codable {
-    init(url: String) {
+    public init(url: String) {
         //default settings
         self.url = url
     }
-    init(url: String, vCodec: String, vQuality: Int, aFormat: String, isAudioOnly: Bool, isNoTTWatermark: Bool, isTTFullAudio: Bool, isAudioMuted: Bool, dubLang: Bool) {
+    public init(url: String, vCodec: String, vQuality: Int, aFormat: String, isAudioOnly: Bool, isNoTTWatermark: Bool, isTTFullAudio: Bool, isAudioMuted: Bool, dubLang: Bool) {
         self.url = url
         self.vCodec = vCodec
         self.vQuality = vQuality

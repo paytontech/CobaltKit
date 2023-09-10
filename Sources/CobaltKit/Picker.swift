@@ -7,7 +7,7 @@
 
 import Foundation
 public class Picker: Codable {
-    init(type: String, url: String, thumb: String) {
+    public init(type: String, url: String, thumb: String) {
         self.type = type
         self.url = url
         self.thumb = thumb
