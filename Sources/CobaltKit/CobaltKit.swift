@@ -43,34 +43,37 @@ public class CobaltManager: NSObject, ObservableObject {
                                 callback(nil, err)
                                 return
                             }
-                                if let statusUpdate = statusUpdate {
-                                    statusUpdate("Download complete!")
-                                }
-                            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                                    let destinationURL = documentsDirectory.appendingPathComponent("downloadedVideo.mp4")
-                                    
-                                    do {
-                                        do {
-                                            try FileManager.default.removeItem(at: destinationURL)
-                                        } catch {
-                                            callback(nil, error)
-                                        }
-                                        try FileManager.default.moveItem(at: media!, to: destinationURL)
-                                    } catch {
-                                        callback(nil, error)
-                                        return
-                                    }
-                                callback(destinationURL, nil)
-                            
-                        } {
-                            didSet {
-                                print(session.progress.fractionCompleted)
-                                if let percentageUpdate = percentageUpdate {
-                                    percentageUpdate(session.progress.fractionCompleted / 1.0)
-                                }
+                            if let statusUpdate = statusUpdate {
+                                statusUpdate("Download complete!")
                             }
+                            
+                            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                            let destinationURL = documentsDirectory.appendingPathComponent("downloadedVideo.mp4")
+                            
+                            do {
+                                do {
+                                    try FileManager.default.removeItem(at: destinationURL)
+                                } catch {
+                                    callback(nil, error)
+                                }
+                                try FileManager.default.moveItem(at: media!, to: destinationURL)
+                            } catch {
+                                callback(nil, error)
+                                return
+                            }
+                            callback(destinationURL, nil)
                         }
-                        
+
+                        // Add an observer for the progress property of the download task
+                        var progressObserver: NSKeyValueObservation?
+
+                        progressObserver = session.observe(\.progress.fractionCompleted, options: [.new], changeHandler: { (_, change) in
+                            if let percentageUpdate = percentageUpdate {
+                                percentageUpdate(change.newValue ?? 0.0)
+                            }
+                        })
+
+                        // Resume the download task
                         session.resume()
                         
                         
