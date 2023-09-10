@@ -38,8 +38,6 @@ public class CobaltManager: NSObject, ObservableObject {
                     if response?.status == .stream {
                         if let statusUpdate = statusUpdate {
                             statusUpdate("Now downloading...")
-                            
-
                         }
                         urlSession.downloadTask(with: URL(string: (response?.url!)!)!) { media, res, err in
                             if let err = err {
@@ -80,7 +78,18 @@ enum CobaltError: Error {
     case itsFucked
 }
 
-struct CobaltRequest: Codable {
+class CobaltRequest: Codable {
+    init(url: String, vCodec: String, vQuality: Int, aFormat: String, isAudioOnly: Bool, isNoTTWatermark: Bool, isTTFullAudio: Bool, isAudioMuted: Bool, dubLang: Bool) {
+        self.url = url
+        self.vCodec = vCodec
+        self.vQuality = vQuality
+        self.aFormat = aFormat
+        self.isAudioOnly = isAudioOnly
+        self.isNoTTWatermark = isNoTTWatermark
+        self.isTTFullAudio = isTTFullAudio
+        self.isAudioMuted = isAudioMuted
+        self.dubLang = dubLang
+    }
     var url: String
     var vCodec: String = VideoCodec.h264.rawValue
     var vQuality: Int = 720
@@ -91,7 +100,15 @@ struct CobaltRequest: Codable {
     var isAudioMuted: Bool = false
     var dubLang: Bool = false
 }
-struct CobaltResponse: Codable {
+class CobaltResponse: Codable {
+    init(status: CobaltResStatus, text: String? = nil, url: String? = nil, pickerType: PickerType? = nil, picker: Picker? = nil, audio: String? = nil) {
+        self.status = status
+        self.text = text
+        self.url = url
+        self.pickerType = pickerType
+        self.picker = picker
+        self.audio = audio
+    }
     var status: CobaltResStatus
     var text: String? /* ??? waht is this <---- absolute DUMBASS its human readable status stuff */
     var url: String?
@@ -100,7 +117,12 @@ struct CobaltResponse: Codable {
     var audio: String?
 }
 
-struct Picker: Codable {
+class Picker: Codable {
+    init(type: String, url: String, thumb: String) {
+        self.type = type
+        self.url = url
+        self.thumb = thumb
+    }
     var type: String
     var url: String
     var thumb: String
